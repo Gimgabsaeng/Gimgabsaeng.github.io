@@ -1,5 +1,6 @@
 (() => {
     let yOffset = 0 // window.pageYOffset
+    let prevScrollHeight = 0
     let currentScene = 0 // 현재 활성화된(눈 앞에 보고 있는) scene(scroll-section)
 
     const sceneInfo = [
@@ -12,6 +13,10 @@
 
                 logo: document.querySelector('#scroll-section-0 .main-logo.one'),
                 scroller: document.querySelector('#scroll-section-0 .page-footer'),
+
+                messageTwo: document.querySelector('#scroll-section-0 .main-message.two'),
+                messageThree: document.querySelector('#scroll-section-0 .main-message.three'),
+                messageFour: document.querySelector('#scroll-section-0 .main-message.four'),
             },
             values: {
                 logoOpacityIn: [0, 1, { start: 0.1, end: 0.2 }], // scroll 비율을 이용한 타이밍
@@ -19,34 +24,24 @@
                 logoOpacityOut: [1, 0, { start: 0.25, end: 0.3 }],
                 logoTranslateYOut: [0, -20, { start: 0.25, end: 0.3 }],
 
-                scrollerOpacityOut: [1, 0, { start: 0, end: 0.05}]
+                scrollerOpacityOut: [1, 0, { start: 0, end: 0.05}],
+                
+                messageTwoOpacityIn: [0, 1, { start: 0.3, end: 0.4 }],
+                messageTwoTranslateYIn: [20, 0, { start: 0.3, end: 0.4 }],
+                messageTwoOpacityOut: [1, 0, { start: 0.45, end: 0.5 }],
+                messageTwoTranslateYOut: [0, -20, { start: 0.45, end: 0.5 }],
+
+                messageThreeOpacityIn: [0, 1, { start: 0.5, end: 0.6 }],
+                messageThreeTranslateYIn: [20, 0, { start: 0.5, end: 0.6 }],
+                messageThreeOpacityOut: [1, 0, { start: 0.65, end: 0.7 }],
+                messageThreeTranslateYOut: [0, -20, { start: 0.65, end: 0.7 }],
+
+                messageFourOpacityIn: [0, 1, { start: 0.7, end: 0.8 }],
+                messageFourTranslateYIn: [20, 0, { start: 0.7, end: 0.8 }],
+                messageFourOpacityOut: [1, 0, { start: 0.85, end: 0.9 }],
+                messageFourTranslateYOut: [0, -20, { start: 0.85, end: 0.9 }],
             }
         },
-        {
-            type: 'sticky',
-            heightNum: 3,
-            scrollHeight: 0,
-            objs: {
-                container: document.querySelector('#scroll-section-1'),
-
-            },
-            values: {
-
-            }
-        },
-        {
-            type: 'sticky',
-            heightNum: 3,
-            scrollHeight: 0,
-            objs: {
-                container: document.querySelector('#scroll-section-2'),
-
-            },
-            values: {
-
-            }
-        },
-
     ]
 
     function setLayout() {
@@ -81,16 +76,18 @@
             prevScrollHeight += sceneInfo[i].scrollHeight
         }
 
-        if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
-            enterNewScene = true
-            currentScene++
-            document.body.setAttribute('id', `show-scene-${currentScene}`)
-        }
-
         if (yOffset < prevScrollHeight) {
             if (currentScene === 0) return // 브라우저 바운스 효과로 마이너스가 되는 것을 방지
             enterNewScene = true
             currentScene--
+            document.body.setAttribute('id', `show-scene-${currentScene}`)
+        }
+
+        if (!sceneInfo[currentScene]) return
+        
+        if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+            enterNewScene = true
+            currentScene++
             document.body.setAttribute('id', `show-scene-${currentScene}`)
         }
 
@@ -119,13 +116,37 @@
                     objs.logo.style.opacity = calcValues(values.logoOpacityOut, currentYOffset)
                     objs.logo.style.transform = `translate3d(0, ${calcValues(values.logoTranslateYOut, currentYOffset)}%, 0)`
                 }
+
+                if (scrollRatio <= 0.42) {
+                    // in
+                    objs.messageTwo.style.opacity = calcValues(values.messageTwoOpacityIn, currentYOffset)
+                    objs.messageTwo.style.transform = `translate3d(0, ${calcValues(values.messageTwoTranslateYIn, currentYOffset)}%, 0)`
+                } else {
+                    // out
+                    objs.messageTwo.style.opacity = calcValues(values.messageTwoOpacityOut, currentYOffset)
+                    objs.messageTwo.style.transform = `translate3d(0, ${calcValues(values.messageTwoTranslateYOut, currentYOffset)}%, 0)`
+                }
+
+                if (scrollRatio <= 0.62) {
+                    // in
+                    objs.messageThree.style.opacity = calcValues(values.messageThreeOpacityIn, currentYOffset)
+                    objs.messageThree.style.transform = `translate3d(0, ${calcValues(values.messageThreeTranslateYIn, currentYOffset)}%, 0)`
+                } else {
+                    // out
+                    objs.messageThree.style.opacity = calcValues(values.messageThreeOpacityOut, currentYOffset)
+                    objs.messageThree.style.transform = `translate3d(0, ${calcValues(values.messageThreeTranslateYOut, currentYOffset)}%, 0)`
+                }
+
+                if (scrollRatio <= 0.82) {
+                    // in
+                    objs.messageFour.style.opacity = calcValues(values.messageFourOpacityIn, currentYOffset)
+                    objs.messageFour.style.transform = `translate3d(0, ${calcValues(values.messageFourTranslateYIn, currentYOffset)}%, 0)`
+                } else {
+                    // out
+                    objs.messageFour.style.opacity = calcValues(values.messageFourOpacityOut, currentYOffset)
+                    objs.messageThree.style.transform = `translate3d(0, ${calcValues(values.messageFourTranslateYOut, currentYOffset)}%, 0)`
+                }
                 objs.scroller.style.opacity = calcValues(values.scrollerOpacityOut, currentYOffset)
-                break
-            case 1:
-                console.log('1 play')
-                break
-            case 2:
-                console.log('2 play')
                 break
         }
     }
