@@ -10,9 +10,16 @@
             objs: {
                 container: document.querySelector('#scroll-section-0'),
 
+                logo: document.querySelector('#scroll-section-0 .main-logo.one'),
+                scroller: document.querySelector('#scroll-section-0 .page-footer'),
             },
             values: {
+                logoOpacityIn: [0, 1, { start: 0.1, end: 0.2 }], // scroll 비율을 이용한 타이밍
+                logoTranslateYIn: [20, 0, { start: 0.1, end: 0.2 }],
+                logoOpacityOut: [1, 0, { start: 0.25, end: 0.3 }],
+                logoTranslateYOut: [0, -20, { start: 0.25, end: 0.3 }],
 
+                scrollerOpacityOut: [1, 0, { start: 0, end: 0.05}]
             }
         },
         {
@@ -103,6 +110,16 @@
         switch (currentScene) {
             case 0:
                 console.log('0 play')
+                if (scrollRatio <= 0.22) {
+                    // in
+                    objs.logo.style.opacity = calcValues(values.logoOpacityIn, currentYOffset)
+                    objs.logo.style.transform = `translate3d(0, ${calcValues(values.logoTranslateYIn, currentYOffset)}%, 0)`
+                } else {
+                    // out
+                    objs.logo.style.opacity = calcValues(values.logoOpacityOut, currentYOffset)
+                    objs.logo.style.transform = `translate3d(0, ${calcValues(values.logoTranslateYOut, currentYOffset)}%, 0)`
+                }
+                objs.scroller.style.opacity = calcValues(values.scrollerOpacityOut, currentYOffset)
                 break
             case 1:
                 console.log('1 play')
@@ -113,6 +130,33 @@
         }
     }
 
+    function calcValues(values, currentYOffset) { // currentYOffset - 현재 scene 에서 얼마나 스크롤 되었는지 보는 값
+        const scrollHeight = sceneInfo[currentScene].scrollHeight
+        // 현재 scene 에서 스크롤 된 범위를 비율로 구하기
+        const scrollRatio = currentYOffset / scrollHeight
+
+        let rv
+        if (values.length === 3) {
+            // start ~ end 사이에 애니메이션 실행
+            const elemScrollStart = values[2].start * scrollHeight
+            const elemScrollEnd = values[2].end * scrollHeight
+            const elemScrollHeight = elemScrollEnd - elemScrollStart
+            const elemScrollRatio = (currentYOffset - elemScrollStart) / elemScrollHeight
+
+            if (currentYOffset >= elemScrollStart && currentYOffset <= elemScrollEnd) {
+                rv = elemScrollRatio * (values[1] - values[0]) + values[0]
+            } else if (currentYOffset < elemScrollStart) {
+                rv = values[0]
+            } else if (currentYOffset > elemScrollEnd) {
+                rv = values[1]
+            }
+
+        } else {
+            rv = scrollRatio * (values[1] - values[0]) + values[0]
+        }
+
+        return rv
+    }
 
     window.addEventListener('scroll', () => {
         yOffset = window.pageYOffset

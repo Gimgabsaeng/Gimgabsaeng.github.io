@@ -30,3 +30,46 @@ a {
     color: #000;
     flex-direction: column;
 }
+
+.scroll-section {
+    padding-top: 50vh;
+    /* border: 1px solid red; todo remove */
+}
+
+.main-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+	top: 35vh;
+    margin: 5px 0;
+    height: 3em;
+    font-size: 2.5rem;
+    opacity: 0;
+    text-align: center;
+}
+
+.sticky-elem {
+    display: none;
+    position: fixed;
+    left: 0;
+    width: 100%;
+}
+
+#scroll-section-0 .page-footer {
+    position: absolute;
+    display: flex;
+    width: 100%;
+    bottom: 8vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+#scroll-section-0 .page-footer p {
+    margin-top: 1rem;
+}
+
+body#show-scene-0 #scroll-section-0 .sticky-elem,
+body#show-scene-1 #scroll-section-1 .sticky-elem,
+body#show-scene-2 #scroll-section-2 .sticky-elem {
+    display: block;
+}
