@@ -1,0 +1,32 @@
+@charset 'utf-8';
+
+html {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+}
+
+body {
+    overflow-x: hidden;
+    color: rgb(226, 226, 224);
+    letter-spacing: -0.05em;
+    background: black;
+}
+
+p {
+    line-height: 1.6;
+}
+
+a {
+    color: rgb(226, 226, 224);
+    text-decoration: none;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 7rem;
+    background: #fff;
+    color: #000;
+    flex-direction: column;
+}
