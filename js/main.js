@@ -269,6 +269,14 @@
         return rv
     }
 
+    function introduction() {
+        console.log('youtube: 개발왕루피')
+        console.log('instagram : @thedevluffy')
+        console.log('github : thedevluffy')
+        console.log('email : thedevluffy@gmail.com')
+    }
+
+    introduction()
     setCanvasImages()
     window.addEventListener('scroll', () => {
         yOffset = window.pageYOffset
