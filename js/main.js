@@ -24,8 +24,8 @@
                 logoOpacityOut: [1, 0, { start: 0.25, end: 0.3 }],
                 logoTranslateYOut: [0, -20, { start: 0.25, end: 0.3 }],
 
-                scrollerOpacityOut: [1, 0, { start: 0, end: 0.05}],
-                
+                scrollerOpacityOut: [1, 0, { start: 0, end: 0.05 }],
+
                 messageTwoOpacityIn: [0, 1, { start: 0.3, end: 0.4 }],
                 messageTwoTranslateYIn: [20, 0, { start: 0.3, end: 0.4 }],
                 messageTwoOpacityOut: [1, 0, { start: 0.45, end: 0.5 }],
@@ -42,6 +42,50 @@
                 messageFourTranslateYOut: [0, -20, { start: 0.85, end: 0.9 }],
             }
         },
+        {
+            type: 'sticky',
+            heightNum: 5,
+            scrollHeight: 0,
+            objs: {
+                container: document.querySelector('#scroll-section-1'),
+
+                messageOne: document.querySelector('#scroll-section-1 .sub-message.one'),
+                messageTwo: document.querySelector('#scroll-section-1 .sub-message.two'),
+
+                canvas: document.querySelector('#video-canvas-1'),
+                context: document.querySelector('#video-canvas-1').getContext('2d'),
+                videoImages: []
+            },
+            values: {
+                videoImageCount: 197,
+                imageSequence: [0, 196],
+                canvasOpacityIn: [0, 1, { start: 0, end: 0.1 }],
+                canvasOpacityOut: [1, 0, { start: 0.9, end: 1 }],
+
+                messageOneOpacityIn: [0, 1, { start: 0.1, end: 0.2 }],
+                messageOneTranslateYIn: [20, 0, { start: 0.1, end: 0.2 }],
+                messageOneOpacityOut: [1, 0, { start: 0.25, end: 0.3 }],
+                messageOneTranslateYOut: [0, -20, { start: 0.25, end: 0.3 }],
+
+                messageTwoOpacityIn: [0, 1, { start: 0.35, end: 0.45 }],
+                messageTwoTranslateYIn: [20, 0, { start: 0.35, end: 0.45 }],
+                messageTwoOpacityOut: [1, 0, { start: 0.5, end: 0.55 }],
+                messageTwoTranslateYOut: [0, -20, { start: 0.5, end: 0.55 }],
+            }
+        },
+        {
+            type: 'sticky',
+            heightNum: 2,
+            scrollHeight: 0,
+            objs: {
+                container: document.querySelector('#scroll-section-2'),
+
+                messageOne: document.querySelector('#scroll-section-2 .main-message.one'),
+            },
+            values: {
+                messageOneOpacityIn: [0, 1, { start: 0.1, end: 0.2 }],
+            }
+        }
     ]
 
     function setLayout() {
@@ -65,6 +109,17 @@
         }
 
         document.body.setAttribute('id', `show-scene-${currentScene}`)
+
+        const heightRatio = window.innerHeight / 1080
+        sceneInfo[1].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`
+    }
+
+    function setCanvasImages() {
+        for (let i = 0; i < sceneInfo[1].values.videoImageCount; i++) {
+            let imgElem = new Image()
+            imgElem.src = `./video/002/IMG${1001 + i}.jpg`
+            sceneInfo[1].objs.videoImages.push(imgElem)
+        }
     }
 
     function scrollLoop() {
@@ -84,7 +139,7 @@
         }
 
         if (!sceneInfo[currentScene]) return
-        
+
         if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
             enterNewScene = true
             currentScene++
@@ -106,7 +161,6 @@
 
         switch (currentScene) {
             case 0:
-                console.log('0 play')
                 if (scrollRatio <= 0.22) {
                     // in
                     objs.logo.style.opacity = calcValues(values.logoOpacityIn, currentYOffset)
@@ -148,6 +202,42 @@
                 }
                 objs.scroller.style.opacity = calcValues(values.scrollerOpacityOut, currentYOffset)
                 break
+            case 1:
+                let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset))
+                objs.context.drawImage(objs.videoImages[sequence2], 0, 0)
+
+                if (scrollRatio >= 0.9) {
+                    objs.canvas.style.opacity = calcValues(values.canvasOpacityOut, currentYOffset)
+                } else {
+                    objs.canvas.style.opacity = calcValues(values.canvasOpacityIn, currentYOffset)
+                }
+
+                if (scrollRatio <= 0.22) {
+                    // in
+                    objs.messageOne.style.opacity = calcValues(values.messageOneOpacityIn, currentYOffset)
+                    objs.messageOne.style.transform = `translate3d(0, ${calcValues(values.messageOneTranslateYIn, currentYOffset)}%, 0)`
+                } else {
+                    // out
+                    objs.messageOne.style.opacity = calcValues(values.messageOneOpacityOut, currentYOffset)
+                    objs.messageOne.style.transform = `translate3d(0, ${calcValues(values.messageOneTranslateYOut, currentYOffset)}%, 0)`
+                }
+
+                if (scrollRatio <= 0.47) {
+                    // in
+                    objs.messageTwo.style.opacity = calcValues(values.messageTwoOpacityIn, currentYOffset)
+                    objs.messageTwo.style.transform = `translate3d(0, ${calcValues(values.messageTwoTranslateYIn, currentYOffset)}%, 0)`
+                } else {
+                    // out
+                    objs.messageTwo.style.opacity = calcValues(values.messageTwoOpacityOut, currentYOffset)
+                    objs.messageTwo.style.transform = `translate3d(0, ${calcValues(values.messageTwoTranslateYOut, currentYOffset)}%, 0)`
+                }
+                break
+            case 2:
+            
+                if (scrollRatio <= 0.22) {
+                    objs.messageOne.style.opacity = calcValues(values.messageOneOpacityIn, currentYOffset)
+                }
+                break
         }
     }
 
@@ -179,6 +269,7 @@
         return rv
     }
 
+    setCanvasImages()
     window.addEventListener('scroll', () => {
         yOffset = window.pageYOffset
         scrollLoop()
